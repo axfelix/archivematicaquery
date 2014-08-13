@@ -18,7 +18,10 @@ def fileFormatLister(hitman):
       try:
         fileFormats.append( x[u'ns0:techMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:object_list'][0][u'ns2:objectCharacteristics_list'][0][u'ns2:objectCharacteristicsExtension_list'][0][u'ns3:fits_list'][0][u'ns3:identification_list'][0][u'ns3:identity_list'][0][u'@format'])
       except:
-        pass
+        try:
+          fileFormats.append( x[u'ns0:techMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns3:object_list'][0][u'ns3:objectCharacteristics_list'][0][u'ns3:objectCharacteristicsExtension_list'][0][u'ns4:fits_list'][0][u'ns4:identification_list'][0][u'ns4:identity_list'][0][u'@format'])
+        except:
+          pass
     amdSecElementNum += 1
   return fileFormats
 
@@ -45,7 +48,12 @@ def AIPsummary():
     for x in results.hits.hits:
       totalAIPsize += x._source.size
       allFileFormats.extend(fileFormatLister(x))
-      ingestDates.append( str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].month) + "-" + str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].year))
+
+      try:
+        # no idea why this needs ns2 sometimes and ns3 sometimes. doesn't seem like it's arbitrarily incremented but definitely seems arbitrary. need to fix.
+        ingestDates.append( str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].month) + "-" + str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].year))
+      except:
+        ingestDates.append( str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns3:event_list'][0][u'ns3:eventDateTime'].month) + "-" + str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns3:event_list'][0][u'ns3:eventDateTime'].year))
 
     totalFiles = len(allFileFormats)
     fileFormatCounts = Counter(allFileFormats)
@@ -72,8 +80,11 @@ def AIPproperties(UUID):
 
   if results.hits.hits:
     size = '%.2f' % results.hits.hits[0]._source.size
-    numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
-    fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
+    #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+    fileFormatList = fileFormatLister(results.hits.hits[0])
+    numFiles = len(fileFormatList)
+    fileFormatCounts = Counter(fileFormatList)
+    #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
     return (size,numFiles,fileFormatCounts,1)
 
   else:
@@ -90,8 +101,11 @@ def AIPproperties(UUID):
 
     if results.hits.hits:
       size = '%.2f' % results.hits.hits[0]._source.size
-      numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
-      fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
+      #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+      fileFormatList = fileFormatLister(results.hits.hits[0])
+      numFiles = len(fileFormatList)
+      fileFormatCounts = Counter(fileFormatList)
+      #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
       return (size,numFiles,fileFormatCounts,1)
 
     else:
@@ -108,8 +122,11 @@ def AIPproperties(UUID):
 
       if results.hits.hits:
         size = '%.2f' % results.hits.hits[0]._source.size
-        numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
-        fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
+        #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+        fileFormatList = fileFormatLister(results.hits.hits[0])
+        numFiles = len(fileFormatList)
+        fileFormatCounts = Counter(fileFormatList)
+        #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
         return (size,numFiles,fileFormatCounts,1)
 
       else:
