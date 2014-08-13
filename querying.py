@@ -44,8 +44,11 @@ def AIPsummary():
     totalAIPsize = 0
 
     allFileFormats = []
+    AICs = []
     ingestDates = []
     for x in results.hits.hits:
+      if str(results.hits.hits[0]._source.isPartOf) != None:
+        AICs.append(results.hits.hits[0]._source.isPartOf)
       totalAIPsize += x._source.size
       allFileFormats.extend(fileFormatLister(x))
 
@@ -61,7 +64,7 @@ def AIPsummary():
     totalAIPsizeMB = '%.2f' % totalAIPsize
     averageAIPsizeMB = '%.2f' % (totalAIPsize/len(results.hits.hits))
 
-    return ( totalAIPs, totalFiles, fileFormatCounts, ingestDateCounts, totalAIPsizeMB, averageAIPsizeMB )
+    return ( totalAIPs, totalFiles, fileFormatCounts, ingestDateCounts, totalAIPsizeMB, averageAIPsizeMB, set(AICs) )
 
 
 #UUID = "eDRn6BomQFaMP6TCZm9VhA"

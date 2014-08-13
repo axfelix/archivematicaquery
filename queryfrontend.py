@@ -1,6 +1,7 @@
 from bottle import get, post, request, run
 import re
 import querying
+from datetime import datetime
 from collections import Counter
 
 @get('/reports')
@@ -25,12 +26,10 @@ def do_query():
     UUID = request.forms.get('UUID')
     AIPpropertyData = querying.AIPproperties(UUID)
     if AIPpropertyData[3] == 1:
-        if str(AIPpropertyData[4]) == "None":
-          AIPpropertyData[4] = "N/A"
         tallyRows = ""
         for fileTally in AIPpropertyData[2].most_common():
           tallyRows += str("<tr><td>"+str(fileTally[0])+"</td><td>"+str(fileTally[1])+"</td></tr>")
-        return "<h1>summary for AIP "+UUID+"</h1><p>AIP size: "+str(AIPpropertyData[0])+" MB</p><p>total number of files in AIP: "+str(AIPpropertyData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+tallyRows+"</table></p>"+"<p>in AIC: "+re.sub('AIC#','',str(AIPpropertyData[4]))+"</p>"
+        return "<h1>summary for AIP "+UUID+"</h1><p>AIP size: "+str(AIPpropertyData[0])+" MB</p><p>total number of files in AIP: "+str(AIPpropertyData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+tallyRows+"</table></p>"+"<p>in AIC: "+re.sub('AIC#','',str(AIPpropertyData[4]))+"</p><p>"+"report generated at "+str(datetime.now())+"</p>"
     else:
         return "<p>No results found. May not be a valid UUID or AIP name.</p>"
 
@@ -43,7 +42,7 @@ def do_summary():
     dateTallyRows = ""
     for dateTally in summaryData[3].most_common():
       dateTallyRows += str("<tr><td>"+str(dateTally[0])+"</td><td>"+str(dateTally[1])+"</td></tr>")
-    return "<h1>summary of AIPs</h1><p>total AIPs: "+str(summaryData[0])+"</p><p>total files across all AIPS: "+str(summaryData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+formatTallyRows+"</table></p><p>ingest statistics, by month:</p><p><table cellspacing='10'>"+dateTallyRows+"</table></p><p>total size of all AIPs: "+str(summaryData[4])+" MB</p><p>average AIP size: "+str(summaryData[5])+" MB</p>"
+    return "<h1>summary of AIPs</h1><p>total AIPs: "+str(summaryData[0])+"</p><p>total AICs: "+str(len(list(summaryData[6])))+"</p><p>total files across all AIPS: "+str(summaryData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+formatTallyRows+"</table></p><p>ingest statistics, by month:</p><p><table cellspacing='10'>"+dateTallyRows+"</table></p><p>total size of all AIPs: "+str(summaryData[4])+" MB</p><p>average AIP size: "+str(summaryData[5])+" MB</p><p>"+"report generated at "+str(datetime.now())+"</p>"
 
 @get('/unprocessed')
 def do_unprocessed():
