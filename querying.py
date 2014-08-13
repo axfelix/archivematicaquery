@@ -80,12 +80,11 @@ def AIPproperties(UUID):
 
   if results.hits.hits:
     size = '%.2f' % results.hits.hits[0]._source.size
-    #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+    AIC = results.hits.hits[0]._source.isPartOf
     fileFormatList = fileFormatLister(results.hits.hits[0])
     numFiles = len(fileFormatList)
     fileFormatCounts = Counter(fileFormatList)
-    #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
-    return (size,numFiles,fileFormatCounts,1)
+    return (size,numFiles,fileFormatCounts,1,AIC)
 
   else:
     q = TermQuery("uuid", UUID)
@@ -101,12 +100,11 @@ def AIPproperties(UUID):
 
     if results.hits.hits:
       size = '%.2f' % results.hits.hits[0]._source.size
-      #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+      AIC = results.hits.hits[0]._source.isPartOf
       fileFormatList = fileFormatLister(results.hits.hits[0])
       numFiles = len(fileFormatList)
       fileFormatCounts = Counter(fileFormatList)
-      #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
-      return (size,numFiles,fileFormatCounts,1)
+      return (size,numFiles,fileFormatCounts,1,AIC)
 
     else:
       q = TermQuery("name", UUID)
@@ -122,15 +120,14 @@ def AIPproperties(UUID):
 
       if results.hits.hits:
         size = '%.2f' % results.hits.hits[0]._source.size
-        #numFiles = len(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:fileSec_list'][0][u'ns0:fileGrp_list']) - 1
+        AIC = results.hits.hits[0]._source.isPartOf
         fileFormatList = fileFormatLister(results.hits.hits[0])
         numFiles = len(fileFormatList)
         fileFormatCounts = Counter(fileFormatList)
-        #fileFormatCounts = Counter(fileFormatLister(results.hits.hits[0]))
-        return (size,numFiles,fileFormatCounts,1)
+        return (size,numFiles,fileFormatCounts,1,AIC)
 
       else:
-        return (0,0,0,0)
+        return (0,0,0,0,0)
 
 
 def unprocessedTransfers():
