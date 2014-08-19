@@ -13,7 +13,7 @@ def queryfields():
             &nbsp;&nbsp;AIP name or UUID: <input name="UUID" type="text" />
             <input value="query" type="submit" />
         </form>
-        <form action"/aic" method="post">
+        <form action="/aic" method="post">
             &nbsp;&nbsp;or, query an AIC: <input name="AIC" type"text" />
             <input value="query" type="submit" />
         </form>
@@ -50,7 +50,7 @@ def do_aic_query():
     AIPqueryRows = ""
     for AIPname in summaryData[6]:
       AIPqueryRows += '<form action="/reports" method="post"><input value='+AIPname+' type="submit" /></form>'
-    return "<h1>summary of AIPs</h1><p>total AIPs in AIC: "+str(summaryData[0])+"</p><p>total files in AIC: "+str(summaryData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+formatTallyRows+"</table></p><p>ingest statistics, by month:</p><p><table cellspacing='10'>"+dateTallyRows+"</table></p><p>total size of AIC: "+str(summaryData[4])+" MB</p><p>average AIP size: "+str(summaryData[5])+" MB</p><p>AIP names (click for detail)</p>"+AIPqueryRows+"<p>report generated at "+str(datetime.now())+"</p>"
+    return "<h1>summary for AIC "+AIC+"</h1><p>total AIPs in AIC: "+str(summaryData[0])+"</p><p>total files in AIC: "+str(summaryData[1])+"</p><p>tally of file formats:</p><p><table cellspacing='10'>"+formatTallyRows+"</table></p><p>ingest statistics, by month:</p><p><table cellspacing='10'>"+dateTallyRows+"</table></p><p>total size of AIC: "+str(summaryData[4])+" MB</p><p>average AIP size: "+str(summaryData[5])+" MB</p><p>AIP names (click for detail)</p>"+AIPqueryRows+"<p>report generated at "+str(datetime.now())+"</p>"
 
 @get('/summary')
 def do_summary():

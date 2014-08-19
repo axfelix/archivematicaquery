@@ -2,6 +2,7 @@ import sys
 sys.path.append("/usr/lib/archivematica/archivematicaCommon/externals")
 from pyes import *
 from collections import Counter
+import re
 
 conn = ES('http://192.168.56.101:9200/')
 start_page = 1
@@ -134,7 +135,7 @@ def AIPproperties(UUID):
 
 
 def AICproperties(AIC):
-  AICname = re.sub('AIC#', '', AIC)
+  AICname = 'AIC#'+AIC
   q = TermQuery("isPartOf", AICname)
 
   try:
