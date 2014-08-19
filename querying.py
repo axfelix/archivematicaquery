@@ -133,6 +133,51 @@ def AIPproperties(UUID):
         return (0,0,0,0,0)
 
 
+def AICproperties(AIC):
+  AICname = re.sub('AIC#', '', AIC)
+  q = TermQuery("isPartOf", AICname)
+
+  try:
+    results = conn.search_raw(
+      query=q,
+      indices='aips',
+      type='aip'
+    )
+  except:
+    pass
+
+  if results:
+
+    totalAIPs = len(results.hits.hits)
+    totalAIPsize = 0
+
+    allFileFormats = []
+    ingestDates = []
+    AIPnames = []
+    for x in results.hits.hits:
+      totalAIPsize += x._source.size
+      allFileFormats.extend(fileFormatLister(x))
+      AIPnames.append(x._source.name)
+
+      try:
+      # no idea why this needs ns2 sometimes and ns3 sometimes. doesn't seem like it's arbitrarily incremented but definitely seems arbitrary. need to fix.
+        ingestDates.append( str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].month) + "-" + str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns2:event_list'][0][u'ns2:eventDateTime'].year))
+      except:
+        ingestDates.append( str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns3:event_list'][0][u'ns3:eventDateTime'].month) + "-" + str(results.hits.hits[0]._source.mets[u'ns0:mets_list'][0][u'ns0:amdSec_list'][0][u'ns0:digiprovMD_list'][0][u'ns0:mdWrap_list'][0][u'ns0:xmlData_list'][0][u'ns3:event_list'][0][u'ns3:eventDateTime'].year))
+
+    totalFiles = len(allFileFormats)
+    fileFormatCounts = Counter(allFileFormats)
+    ingestDateCounts = Counter(ingestDates)
+    totalAIPsizeMB = '%.2f' % totalAIPsize
+    averageAIPsizeMB = '%.2f' % (totalAIPsize/len(results.hits.hits))
+
+    return ( totalAIPs, totalFiles, fileFormatCounts, ingestDateCounts, totalAIPsizeMB, averageAIPsizeMB, AIPnames, 1 )
+
+
+  else:
+    return (0,0,0,0,0,0,0,0)
+
+
 def unprocessedTransfers():
   q = StringQuery('*')
 
